@@ -1,71 +1,75 @@
+from tkinter import *
 import tkinter as tk
-from tkinter import ttk
+from ttkbootstrap import Style, ttk
 import requests
 
+#-------------------------------------------------------------------#
 def get_definition(word):
     response = requests.get(f"https://api.dictionaryapi.dev/api/v2/entries/en/{word}")
-    data = response.json()
-    if data and 'meanings' in data[0]:
-        return '\n'.join([f"{meaning['partOfSpeech']}: {meaning['definitions'][0]['definition']}\n" for meaning in data[0]['meanings']])
-    return "No definition found."
+    if response.status_code == 200:
+        data = response.json()
+        if data:
+            meanings = data[0]['meanings']
+            definitions = []
+            for meaning in meanings:
+                definitions.append(f"• Meaning: {meaning['partOfSpeech']}\nDefinition: {meaning['definitions'][0]['definition']}\n")
+            return '\n'.join(definitions)
+        return "No definition found."
 
 def search_definition():
-    definition = get_definition(entry_word.get())
-    text_output.config(state='normal')
+    word = entry_word.get()
+    definition = get_definition(word)
+    text_output.configure(state='normal')
     text_output.delete('1.0', tk.END)
     text_output.insert(tk.END, definition)
-    text_output.config(state='disabled')
+    text_output.configure(state='disabled')
 
-def get_es_defi():
-    pass
-    # open('spanish_definitions.json', 'r', encoding='utf-8') as json_file:
-    #         data = json.load(json_file)
-
-def search_definition():
-    if language_var.get() == "English":
-        definition = get_definition(entry_word.get())
-    elif language_var.get() == "Spanish":
-        definition = get_es_defi(entry_word.get())
-    else:
-        definition = "Please select a language."
+def exit():
+    root.destroy()
     
-    text_output.config(state='normal')
-    text_output.delete('1.0', tk.END)
-    text_output.insert(tk.END, definition)
-    text_output.config(state='disabled')
-
-
-
+    
+#----------------------------------------------------------------------#
 
 root = tk.Tk()
-root.title("Dictionary App")
-root.geometry("900x600")
+style = Style(theme="flatly")
+root.title("Ghassan AND Said App")
+root.geometry("1000x560+100+30")
+root.resizable(False,False)
+bgimage =PhotoImage(file="background.png")
+bglabel=Label(root,image=bgimage)
+bglabel.place(x=0,y=0)
 
+
+# Search frame
 frame_search = ttk.Frame(root)
-frame_search.pack(pady=20)
+frame_search.pack(padx=20, pady=20)
+frame_search.place(x=400,y=100)
 
-label_word = ttk.Label(frame_search, text="Enter a word:")
-label_word.grid(row=0, column=0, padx=5)
+# Label for the word entry field
+label_word = ttk.Label(frame_search, text="Enter a word:",foreground="black",
+                       font=('TkDefaultFont', 15, 'bold'))
+label_word.grid(row=0, column=0, padx=5, pady=5)
 
-entry_word = ttk.Entry(frame_search, width=20, )
-entry_word.grid(row=0, column=1, padx=5)
+# Entry field for the word
+entry_word = ttk.Entry(frame_search, width=20, font=('TkDefaultFont 15'))
+entry_word.grid(row=0, column=1, padx=5, pady=5)
 
-language_var = tk.StringVar()
-language_var.set("English")
+# Search button
+button_search = ttk.Button(frame_search, text="Search", command=search_definition,width=15)
+button_search.grid(row=0, column=2, padx=5, pady=5)
 
-english_button = ttk.Radiobutton(frame_search, text="English", variable=language_var, value="English")
-english_button.grid(row=0, column=2, padx=5)
-
-spanish_button = ttk.Radiobutton(frame_search, text="Spanish", variable=language_var, value="Spanish")
-spanish_button.grid(row=0, column=3, padx=5)
-
-button_search = ttk.Button(frame_search, text="Search", command=search_definition)
-button_search.grid(row=0, column=4, padx=5)
-
+# Output frame
 frame_output = ttk.Frame(root)
 frame_output.pack(padx=20, pady=10)
-
-text_output = tk.Text(frame_output, height=30)
+frame_output.place(x=340,y=200)
+text_output = tk.Text(frame_output, height=10, state='disabled',
+                      font=('TkDefaultFont', 11))
 text_output.pack()
+ 
+#exit
+button_exit = ttk.Button( text="exit", command=exit,width=15)
+button_exit.grid(row=0, column=2, padx=5, pady=5)
+button_exit.place(x=600,y=400)
 
 root.mainloop()
+
