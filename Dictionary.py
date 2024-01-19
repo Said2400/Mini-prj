@@ -14,7 +14,7 @@ def get_definition(word):
             for meaning in meanings:
                 definitions.append(f"• Meaning: {meaning['partOfSpeech']}\nDefinition: {meaning['definitions'][0]['definition']}\n")
             return '\n'.join(definitions)
-        return "No definition found."
+    return "No definition found."
 
 def search_definition():
     word = entry_word.get()
