@@ -24,11 +24,13 @@ def search_definition():
     text_output.insert(tk.END, definition)
     text_output.configure(state='disabled')
 
+
 def exit():
     root.destroy()
     
     
 #----------------------------------------------------------------------#
+
 
 root = tk.Tk()
 style = Style(theme="flatly")
@@ -54,9 +56,14 @@ label_word.grid(row=0, column=0, padx=5, pady=5)
 entry_word = ttk.Entry(frame_search, width=20, font=('TkDefaultFont 15'))
 entry_word.grid(row=0, column=1, padx=5, pady=5)
 
+
 # Search button
 button_search = ttk.Button(frame_search, text="Search", command=search_definition,width=15)
 button_search.grid(row=0, column=2, padx=5, pady=5)
+
+button_search = ttk.Button(frame_search, text="Search", command=search_definition)
+button_search.grid(row=0, column=2, padx=5)
+
 
 # Output frame
 frame_output = ttk.Frame(root)
